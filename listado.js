@@ -94,3 +94,67 @@ boton.addEventListener("click", function () {
     .then((respuesta) => renderizarElementos(listadoComentarios))
     .then(console.log(respuesta));
 });
+
+/* -------------------------------------------------------------------------- */
+/*                       [4] FUNCION: Consulta a la API                       */
+/* -------------------------------------------------------------------------- */
+// En este caso vamos a consultar a un servidor del cual nos vamos a traer la data.
+// Esta API tiene su documentaci贸n en: https://jsonplaceholder.typicode.com/
+// Vamos a implementar el endpoint que nos devuelve comentarios para mostrarlos en pantalla.
+
+function consultaApi(endpoint) {
+
+    try{
+    // con el fetch generamos la request a la API ---> le pasamos el endpoint
+    fetch(endpoint)
+      // el fetch retorna una promesa, por eso capturamos su resultado con el then()
+      .then((objetoRespuesta) => {
+      // parseo de JSON a objeto
+        return objetoRespuesta.json();
+      })
+      // obtengo la respuesta "procesada", con los datos que puedo manipular
+      .then((datosJs) => {
+        
+        renderizarElementos(datosJs);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  /* -------------------------------------------------------------------------- */
+/*                      [5] FUNCION: Escuchamos el click                      */
+/* -------------------------------------------------------------------------- */
+// Vamos a reimplementar la escucha del click para lanzar las nuevas funciones.
+
+const boton = document.querySelector("button");
+const endpoint = "https://jsonplaceholder.typicode.com/comments";
+
+boton.addEventListener("click", function () {
+  console.log("Click para ver comentarios...");
+  consultaApi(endpoint);
+});
+
+/* -------------------------------------------------------------------------- */
+/*                      [6] FUNCION: renderizar elementos                     */
+/* -------------------------------------------------------------------------- */
+// Ac谩 vamos a reutilizar la funci贸n de renderizar elementos, implementando
+// el .map() y .join() para obtener el resultado esperado.
+
+function renderizarElementos(listado) {
+  const comentarios = document.querySelector(".comentarios");
+// 4- Solo deben cargarse los primeros 10 comentarios que nos llegan.
+  const primerosDiez = listado.slice(0, 10);
+  const html = primerosDiez.map((comentario) => {
+    return `<div class="comentario">
+              <h4>${comentario.email}</h4>
+              <p>${comentario.body}</p>
+            </div>`;
+  });
+  comentarios.innerHTML = html.join("");
+  boton.style.display = "none";
+}
+
+
+
+
+
